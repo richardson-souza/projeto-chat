@@ -1,6 +1,6 @@
-Sistema simples para cadastramento de apostas. 
+Sistema para exemplo de chat em Java com Websocket e Angular.
 
-# apostas-backend
+# chat-backend
 
 Feito com:
 + Java Spring Rest retornando JSon.
@@ -19,7 +19,7 @@ O retorno JSON terá sempre o mesmo padrão:
 }
 
 
-# apostas-frontend
+# chat-frontend
 
 Feito com:
 + AngularJS.
