@@ -55,9 +55,8 @@ public class SegurancaServico {
         }
 
         /**
-         * Metodo usado para verificar a validade do Token da
-         * requisicao. Invocado no interceptor antes do
-         * acesso ao recurso.
+         * Metodo usado para verificar a validade do Token da requisicao.
+         * Invocado no interceptor antes do acesso ao recurso.
          *
          * @param request
          * @throws TokenExpiradoException
@@ -68,37 +67,41 @@ public class SegurancaServico {
                 try {
                         OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
                         String token = oauthRequest.getAccessToken();
-
-                        if (StringUtils.isBlank(token)) {
-                                throw new TokenInvalidoException("Token vazio.");
-                        }
-
-                        SegurancaAPI segurancaAPI = this.retornarPorToken(token);
-                        if (segurancaAPI == null) {
-                                throw new TokenInvalidoException("Token invalido.");
-                        }
-
-                        Usuario usuario = segurancaAPI.getUsuario();
-                        if (usuario == null) {
-                                throw new TokenInvalidoException("Problema interno no retorno do usuario: nulo.");
-                        }
-
-                        if (segurancaAPI.getToken().contains(token)) {
-                                if (segurancaAPI.expirado()) {
-                                        segurancaAPI.expirarToken();
-                                        this.segurancaRepository.save(segurancaAPI);
-                                        throw new TokenExpiradoException("Token de acesso expirado. Gere um novo token e tente novamente.");
-                                } else {
-                                        Hibernate.initialize(segurancaAPI.getUsuario().getPerfil().getPermissoes()); //force! :/
-                                        SegurancaAPIThreadLocal.setSegurancaAPI(segurancaAPI);
-                                }
-                        } else {
-                                throw new TokenInvalidoException("Token invalido. Tente novamente.");
-                        }
+                        this.verificaValidadeTokenAdicionandoNoContexto(token);
                 } catch (OAuthProblemException e) {
                         throw new TokenInvalidoException("Login invalido. Tente novamente.");
                 } catch (OAuthSystemException ex) {
                         throw new RuntimeException(ex);
+                }
+        }
+
+        @Transactional(propagation = Propagation.REQUIRES_NEW)
+        public synchronized void verificaValidadeTokenAdicionandoNoContexto(String token) throws TokenExpiradoException, TokenInvalidoException {
+                if (StringUtils.isBlank(token)) {
+                        throw new TokenInvalidoException("Token vazio.");
+                }
+
+                SegurancaAPI segurancaAPI = this.retornarPorToken(token);
+                if (segurancaAPI == null) {
+                        throw new TokenInvalidoException("Token invalido.");
+                }
+
+                Usuario usuario = segurancaAPI.getUsuario();
+                if (usuario == null) {
+                        throw new TokenInvalidoException("Problema interno no retorno do usuario: nulo.");
+                }
+
+                if (segurancaAPI.getToken().contains(token)) {
+                        if (segurancaAPI.expirado()) {
+                                segurancaAPI.expirarToken();
+                                this.segurancaRepository.save(segurancaAPI);
+                                throw new TokenExpiradoException("Token de acesso expirado. Gere um novo token e tente novamente.");
+                        } else {
+                                Hibernate.initialize(segurancaAPI.getUsuario().getPerfil().getPermissoes()); //force! :/
+                                SegurancaAPIThreadLocal.setSegurancaAPI(segurancaAPI);
+                        }
+                } else {
+                        throw new TokenInvalidoException("Token invalido. Tente novamente.");
                 }
         }
 
@@ -128,12 +131,11 @@ public class SegurancaServico {
                 }
 
                 segurancaAPI = this.segurancaRepository.save(segurancaAPI);
-                
+
                 if (segurancaAPI.isSalvo()) {
                         if (segurancaAPI.expirado()) {
                                 throw new TokenExpiradoException("Token de acesso expirado. Gere um novo token e tente novamente.");
-                        }
-                        else {
+                        } else {
                                 throw new TokenCriadoException(segurancaAPI);
                         }
                 }
@@ -158,28 +160,28 @@ public class SegurancaServico {
                         throw new TokenInvalidoException("Seguranca: aplicativo nao autorizado.");
                 }
         }
-        
-        private Usuario retornarPorLoginESenha(String login, String senha) throws UsuarioOuSenhaInvalidaException{
-                Usuario  usuario = this.usuarioRepository.findByLoginAndSenha(login, FormatadorUtil.encryptMD5(senha));
-                if(usuario == null){
+
+        private Usuario retornarPorLoginESenha(String login, String senha) throws UsuarioOuSenhaInvalidaException {
+                Usuario usuario = this.usuarioRepository.findByLoginAndSenha(login, FormatadorUtil.encryptMD5(senha));
+                if (usuario == null) {
                         throw new UsuarioOuSenhaInvalidaException("Usuário não encontrado.");
-                }else{
+                } else {
                         Hibernate.initialize(usuario.getPerfil().getPermissoes());
                 }
                 return usuario;
         }
-        
+
         public RetornoLoginForm retornarErroOAuth(int errorCode, String error, Exception e, HttpServletResponse response) {
                 String descricao = error;
-                if(e!=null){
-                        descricao = e.getMessage()!=null ? e.getMessage() : "NullPointerException";
+                if (e != null) {
+                        descricao = e.getMessage() != null ? e.getMessage() : "NullPointerException";
                 }
 
                 new OptionsFilter().configCorsResponse(response);
                 response.setStatus(errorCode);
                 return new RetornoLoginForm(error, descricao, errorCode);
-	}
-        
+        }
+
         @Transactional(propagation = Propagation.REQUIRES_NEW)
         public RetornoLoginForm logarOAuth(HttpServletRequest request, HttpServletResponse response) {
                 try {
@@ -192,20 +194,20 @@ public class SegurancaServico {
                         } catch (TokenInvalidoException e) {
                                 return this.retornarErroOAuth(HttpServletResponse.SC_FORBIDDEN, "Aplicativo cliente não autorizado.", e, response);
                         }
-                        
+
                         String senha = oauthRequest.getPassword();
                         String login = oauthRequest.getUsername();
                         Usuario usuario = null;
-                        
+
                         try {
                                 usuario = this.retornarPorLoginESenha(login, senha);
                         } catch (UsuarioOuSenhaInvalidaException e) {
                                 return this.retornarErroOAuth(HttpServletResponse.SC_FORBIDDEN, "Login e/ou senha inválida.", e, response);
                         }
-                        
+
                         String accessToken = new OAuthIssuerImpl(new MD5Generator()).accessToken();
                         Date proximaDataExpiracao = this.retornarProximaDataExpiracao();
-                        
+
                         try {
                                 this.atualizarToken(usuario, accessToken, proximaDataExpiracao);
                         } catch (TokenExpiradoException e) {
@@ -216,7 +218,7 @@ public class SegurancaServico {
                                 //token jah criado anteriormente, somente retorna.
                                 proximaDataExpiracao = e.getSegurancaAPI().getExpiracaoToken();
                         }
-                        
+
                         return new RetornoLoginForm(accessToken, this.transformarProximaDataExpiracaoEmSegundos(new Date(), proximaDataExpiracao), usuario);
 
                 } catch (OAuthProblemException e) {

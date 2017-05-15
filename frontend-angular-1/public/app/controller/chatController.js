@@ -5,6 +5,10 @@
                 var ctrl = this;
                 limparTela(ctrl);
 
+                ctrl.enviarMensagem = function(){
+                        Chat.enviarMensagem( ctrl.form.mensagem );
+                }
+
                 ctrl.init = function () {
                         ctrl.usuarioId = $routeParams.usuarioId;
                         console.log("usu "+ctrl.usuarioId)

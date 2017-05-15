@@ -4,7 +4,7 @@ Sistema para exemplo de chat em Java com Websocket e Angular.
 
 Feito com:
 + Java Spring Rest retornando JSon.
-+ Spring Security com tag/directiva para Autorização e OAuth.
++ Autenticacao com OAuth2 (Token) e autorizacao por directiva.
 + JPA e Spring Data.
 + Migration com FlyWay.
 
