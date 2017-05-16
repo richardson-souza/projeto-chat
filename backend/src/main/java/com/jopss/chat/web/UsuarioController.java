@@ -10,6 +10,7 @@ import com.jopss.chat.servicos.security.annotation.Privado;
 import com.jopss.chat.web.form.Resposta;
 import com.jopss.chat.web.util.ChatAppController;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.IteratorUtils;
@@ -68,8 +69,8 @@ public class UsuarioController extends ChatAppController {
         @Privado(role = RoleEnum.ROLE_GERAL)
         @RequestMapping(value = "/logado", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
         @ResponseBody
-        public Resposta buscarLogado(HttpServletResponse resp, HttpSession session) throws TokenInvalidoException {
-                Usuario usu = super.segurancaServico.getUsuarioLogado().getUsuario();
+        public Resposta buscarLogado(HttpServletResponse resp, HttpServletRequest req, HttpSession session) throws TokenInvalidoException {
+                Usuario usu = super.segurancaServico.getUsuarioLogado(req).getUsuario();
                 usu.setSenha(null);
 
                 Resposta resposta = new Resposta();

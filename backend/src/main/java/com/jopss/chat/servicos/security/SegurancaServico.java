@@ -27,6 +27,7 @@ import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +77,7 @@ public class SegurancaServico {
         }
 
         @Transactional(propagation = Propagation.REQUIRES_NEW)
-        public synchronized void verificaValidadeTokenAdicionandoNoContexto(String token) throws TokenExpiradoException, TokenInvalidoException {
+        public synchronized SegurancaAPI verificaValidadeTokenAdicionandoNoContexto(String token) throws TokenExpiradoException, TokenInvalidoException {
                 if (StringUtils.isBlank(token)) {
                         throw new TokenInvalidoException("Token vazio.");
                 }
@@ -98,11 +99,12 @@ public class SegurancaServico {
                                 throw new TokenExpiradoException("Token de acesso expirado. Gere um novo token e tente novamente.");
                         } else {
                                 Hibernate.initialize(segurancaAPI.getUsuario().getPerfil().getPermissoes()); //force! :/
-                                SegurancaAPIThreadLocal.setSegurancaAPI(segurancaAPI);
+                                SegurancaAPIThreadLocal.add(segurancaAPI);
                         }
                 } else {
                         throw new TokenInvalidoException("Token invalido. Tente novamente.");
                 }
+                return segurancaAPI;
         }
 
         /**
@@ -234,8 +236,17 @@ public class SegurancaServico {
                 return "" + (horas * 60 * 60);
         }
 
-        public SegurancaAPI getUsuarioLogado() throws TokenInvalidoException {
-                SegurancaAPI seg = SegurancaAPIThreadLocal.getSegurancaAPI();
+        public SegurancaAPI getUsuarioLogado(MessageHeaders messageHeaders) throws TokenInvalidoException {
+                SegurancaAPI seg = SegurancaAPIThreadLocal.getSegurancaAPI(messageHeaders);
+                if (seg == null) {
+                        throw new TokenInvalidoException("Usuário não logado.");
+                } else {
+                        return seg;
+                }
+        }
+
+        public SegurancaAPI getUsuarioLogado(HttpServletRequest req) throws TokenInvalidoException {
+                SegurancaAPI seg = SegurancaAPIThreadLocal.getSegurancaAPI(req);
                 if (seg == null) {
                         throw new TokenInvalidoException("Usuário não logado.");
                 } else {

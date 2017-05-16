@@ -13,7 +13,7 @@ appMain.service("Chat", ["Restangular", "CONST", "Seguranca", function (Restangu
                     console.log('Connected: ' + frame);
                     stompClient.subscribe('/subscribe/canal/chat', function (data) {
                             console.log("Recebido: "+data);
-                    });
+                    }, objHeader);
             });
         }
 

@@ -27,7 +27,7 @@
                         <url>https://oss.sonatype.org/content/repositories/releases/</url>
                 </repository>
         </repositories>
-
+        
         <dependencies>
                 <dependency>
                         <groupId>org.apache.oltu.oauth2</groupId>

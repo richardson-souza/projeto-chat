@@ -46,8 +46,8 @@ public class SegurancaController extends ChatAppController {
         @Privado(role = RoleEnum.ROLE_GERAL)
         @ResponseBody
         @RequestMapping(value = "/verificar/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-        public Resposta verificar(HttpServletResponse resp) throws TokenInvalidoException {
-                RetornoLoginForm retorno = new RetornoLoginForm(super.segurancaServico.getUsuarioLogado().getUsuario());
+        public Resposta verificar(HttpServletResponse resp, HttpServletRequest req) throws TokenInvalidoException {
+                RetornoLoginForm retorno = new RetornoLoginForm(super.segurancaServico.getUsuarioLogado(req).getUsuario());
                 
                 Resposta resposta = new Resposta();
 		resposta.setDado(retorno, resp, retorno.getStatus(), retorno.getMensagemDescricao());

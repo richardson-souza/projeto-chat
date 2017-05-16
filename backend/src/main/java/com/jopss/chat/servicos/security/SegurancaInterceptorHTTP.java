@@ -61,7 +61,7 @@ public class SegurancaInterceptorHTTP extends HandlerInterceptorAdapter {
                         Privado annotPrivado = met.getMethodAnnotation(Privado.class);
                         if(annotPrivado!=null){
                                 RoleEnum roleConfigurada = annotPrivado.role();
-                                SegurancaAPI usuarioLogado = segurancaServico.getUsuarioLogado();
+                                SegurancaAPI usuarioLogado = segurancaServico.getUsuarioLogado(request);
                                 if( !usuarioLogado.getUsuario().getPerfil().contemRoleOuAdmin(roleConfigurada) ){
                                         segurancaServico.retornarErroOAuth(HttpServletResponse.SC_UNAUTHORIZED, "Sem permissao para abrir esta pagina", null, response);
                                         return false;
