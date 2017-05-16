@@ -1,14 +1,21 @@
 appMain.service("Chat", ["Restangular", "CONST", "Seguranca", function (Restangular, CONST, Seguranca) {
-        var socket = new SockJS(CONST.url + "api/endpoint");
-        var stompClient = Stomp.over(socket);
-        var objHeader = {token: Seguranca.getToken()};
 
-        stompClient.connect(objHeader, function (frame) {
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/api/subscribe/canal/chat', objHeader, function (data) {
-                        console.log("Recebido: "+data);
-                });
-        });
+        var socket;
+        var stompClient;
+        var objHeader;
+
+        this.init = function(){
+            socket = new SockJS(CONST.url + "api/endpoint");
+            stompClient = Stomp.over(socket);
+            objHeader = {token:Seguranca.getToken()};
+
+            stompClient.connect(objHeader, function (frame) {
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe('/subscribe/canal/chat', function (data) {
+                            console.log("Recebido: "+data);
+                    });
+            });
+        }
 
         this.disconnect = function(){
                 if (stompClient != null) {
@@ -18,9 +25,7 @@ appMain.service("Chat", ["Restangular", "CONST", "Seguranca", function (Restangu
         }
 
         this.enviarMensagem = function(mensagem){
-            stompClient.send("/api/client/canal/chat", objHeader, JSON.stringify({
-		        message: mensagem
-	      	}) );
+            stompClient.send("/client/mensagem/enviar", objHeader, JSON.stringify({ 'mensagem': mensagem}) );
         }
 
 	}

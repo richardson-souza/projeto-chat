@@ -7,9 +7,9 @@ import com.jopss.chat.modelos.enums.RoleEnum;
 import com.jopss.chat.servicos.security.annotation.Privado;
 import com.jopss.chat.servicos.security.annotation.Publico;
 import com.jopss.chat.web.form.RetornoLoginForm;
-import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.common.error.OAuthError.CodeResponse;
 import org.apache.oltu.oauth2.common.error.OAuthError.ResourceResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.socket.sockjs.support.SockJsHttpRequestHandler;
 
 public class SegurancaInterceptorHTTP extends HandlerInterceptorAdapter {
-
+         private Logger log = Logger.getLogger(SegurancaInterceptorHTTP.class);
+         
         @Autowired
         private SegurancaServico segurancaServico;
         
@@ -30,7 +31,7 @@ public class SegurancaInterceptorHTTP extends HandlerInterceptorAdapter {
 		}
                 
                 if(handler instanceof SockJsHttpRequestHandler){
-                        System.out.println("WEBSOCKET: SegurancaInterceptorHTTP by pass...");
+                        log.info("WEBSOCKET by pass...");
                 }
                 else if(handler instanceof HandlerMethod){
                         HandlerMethod met = (HandlerMethod) handler;

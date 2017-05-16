@@ -11,7 +11,8 @@
 
                 ctrl.init = function () {
                         ctrl.usuarioId = $routeParams.usuarioId;
-                        console.log("usu "+ctrl.usuarioId)
+                        console.log("usu "+ctrl.usuarioId);
+                        Chat.init();
                 };
                 ctrl.init();
                 limparMensagens(ctrl);

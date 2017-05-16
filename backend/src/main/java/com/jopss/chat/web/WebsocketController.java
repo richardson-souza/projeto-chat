@@ -1,31 +1,31 @@
 package com.jopss.chat.web;
 
+import com.jopss.chat.excecoes.TokenInvalidoException;
+import com.jopss.chat.modelos.Mensagem;
+import com.jopss.chat.modelos.SegurancaAPI;
 import com.jopss.chat.servicos.security.SegurancaServico;
 import com.jopss.chat.web.form.WebsocketForm;
-import com.jopss.chat.web.util.ChatAppController;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class WebsocketController extends ChatAppController {
-
-        private static Set<WebsocketForm> clientes = Collections.synchronizedSet(new HashSet<WebsocketForm>());
+@RequestMapping(value = "/")
+public class WebsocketController {
         private Logger log = Logger.getLogger(WebsocketController.class);
 
         @Autowired
-        private SegurancaServico segurancaServico;
-
-        @MessageMapping("/enviar")
-        @SendTo("/canal/chat")
-        public String sendMessage(String message) {
-                log.info("Message: " + message);
-                return "ok";
+        protected SegurancaServico segurancaServico;
+        
+        @MessageMapping("/mensagem/enviar")
+        @SendTo("/subscribe/canal/chat")
+        public Mensagem receberMensagem(WebsocketForm form) throws TokenInvalidoException {
+//                SegurancaAPI logado = this.segurancaServico.getUsuarioLogado();
+                log.info("Message: " + form+", Usuario: "+null);
+                return new Mensagem(form.getMensagem(), null);
         }
 
 }

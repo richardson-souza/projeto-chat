@@ -37,6 +37,11 @@ public class Mensagem extends Modelos {
         public Mensagem() {
         }
 
+        public Mensagem(String texto, Usuario usuario) {
+                this.texto = texto;
+                this.usuario = usuario;
+        }
+
         @Override
         public Long getId() {
                 return id;
