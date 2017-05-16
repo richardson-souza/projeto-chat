@@ -4,19 +4,10 @@ Sistema para exemplo de chat em Java com Websocket e Angular.
 
 Feito com:
 + Java Spring Rest retornando JSon.
-+ Autenticacao com OAuth2 (Token) e autorizacao por directiva.
++ Autenticacao com OAuth2 (Token).
++ Mensageria com Spring.
 + JPA e Spring Data.
 + Migration com FlyWay.
-
-O retorno JSON terá sempre o mesmo padrão:
-
-{
-	"dado":null,
-	"lista":null,
-	"mensagens":[
-		{"chave":"mensagem","valor":"texto da mensagem"}
-	]
-}
 
 
 # chat-frontend
@@ -24,6 +15,7 @@ O retorno JSON terá sempre o mesmo padrão:
 Feito com:
 + AngularJS.
 + Bootstrap.
++ SockJS para Websocket. A vatangem de utilizar esta lib ao invés do Websocket nativo, é a compatibilidade com vários navegadores, e a automatização da troca para Long Pooling caso o WS retornar erro.
 
 Configurar o ubuntu:
 
