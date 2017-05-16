@@ -7,6 +7,7 @@ import com.jopss.chat.web.util.ChatAppController;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/")
 public class WebsocketController extends ChatAppController {
 
-        @MessageMapping("/mensagem/enviar")
+        @MessageMapping("/chat/enviar")
         @SendTo("/subscribe/canal/chat")
         public WebsocketForm receberMensagem(WebsocketForm form, MessageHeaders messageHeaders) {
                 try {
                         SegurancaAPI logado = this.segurancaServico.getUsuarioLogado(messageHeaders);
-                        return new WebsocketForm(form.getMensagem(), logado.getUsuario());
+                        return new WebsocketForm(SimpMessageType.MESSAGE.name(), form.getMensagem(), logado.getUsuario());
                 } catch (TokenInvalidoException ex) {
-                        return new WebsocketForm(form.getMensagem());
+                        return new WebsocketForm(SimpMessageType.OTHER.name(),form.getMensagem());
                 }
         }
 

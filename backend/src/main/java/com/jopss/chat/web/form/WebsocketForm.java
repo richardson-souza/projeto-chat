@@ -3,10 +3,13 @@ package com.jopss.chat.web.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jopss.chat.modelos.Usuario;
 import com.jopss.chat.modelos.enums.SituacaoUsuarioFormEnum;
+import java.util.Date;
 
 public class WebsocketForm {
         
+        private Date dataMensagem = new Date();
         private String mensagem;
+        private String tipoMensagem;
         
         private String nomeUsuario;
         private String idUsuario;
@@ -15,20 +18,30 @@ public class WebsocketForm {
         public WebsocketForm() {
         }
 
-        public WebsocketForm(String mensagem, Usuario usuario) {
-                this(usuario);
+        public WebsocketForm(String tipoMensagem, String mensagem, Usuario usuario) {
+                this(tipoMensagem, usuario);
                 this.mensagem = mensagem;
         }
         
-        public WebsocketForm(Usuario usuario) {
+        public WebsocketForm(String tipoMensagem, Usuario usuario) {
+                this.tipoMensagem = tipoMensagem;
                 this.idUsuario = ""+usuario.getId();
                 this.nomeUsuario = usuario.getNome();
                 this.situacaoUsuario = SituacaoUsuarioFormEnum.ATIVO.name();
         }
         
-        public WebsocketForm(String mensagem) {
+        public WebsocketForm(String tipoMensagem, String mensagem) {
+                this.tipoMensagem = tipoMensagem;
                 this.mensagem = mensagem;
                 this.situacaoUsuario = SituacaoUsuarioFormEnum.INATIVO.name();
+        }
+
+        public Date getDataMensagem() {
+                return dataMensagem;
+        }
+
+        public void setDataMensagem(Date dataMensagem) {
+                this.dataMensagem = dataMensagem;
         }
 
         public String getMensagem() {
@@ -66,6 +79,14 @@ public class WebsocketForm {
 
         public void setIdUsuario(String idUsuario) {
                 this.idUsuario = idUsuario;
+        }
+
+        public String getTipoMensagem() {
+                return tipoMensagem;
+        }
+
+        public void setTipoMensagem(String tipoMensagem) {
+                this.tipoMensagem = tipoMensagem;
         }
 
         @Override

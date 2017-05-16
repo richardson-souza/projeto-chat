@@ -31,10 +31,11 @@ appMain.run(function ($rootScope, $templateCache, $route, Login) {
                         .then(function (result) {
                                 if(result != null && result.dado != null){
                                         if(result.dado.perfil != null){
-                                                $rootScope.permissoes = new Array();
-                                                jQuery.each(result.dado.permissoes, function (i, permissao) {
-                                                        $rootScope.permissoes.push(permissao);
-                                                });
+                                            $rootScope.logado = result.dado;
+                                            $rootScope.permissoes = new Array();
+                                            jQuery.each(result.dado.permissoes, function (i, permissao) {
+                                                    $rootScope.permissoes.push(permissao);
+                                            });
                                         }
                                         
                                 }else{

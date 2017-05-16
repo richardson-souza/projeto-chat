@@ -85,7 +85,7 @@
                                 <ul class="nav navbar-top-links navbar-right">
                                         <li class="dropdown">
                                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                                                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i> {{logado.nome}}
                                                 </a>
                                                 <ul class="dropdown-menu dropdown-user">
                                                         <li>
@@ -94,39 +94,9 @@
                                                 </ul>
                                         </li>
                                 </ul>
-
-                                <div class="navbar-default sidebar" role="navigation">
-
-                                        <div class="list-group">
-                                            <a href="#" class="list-group-item active">
-                                                Usuários
-                                            </a>
-                                            <a href="#" class="list-group-item" ng-click="ctrl.selecionarUsuario('1')">
-                                                <span class="label label-success">Online</span>
-                                                <span class="badge">34</span>
-                                                Visitante 1
-                                            </a>
-                                            <a href="#" class="list-group-item" ng-click="ctrl.selecionarUsuario('2')">
-                                                <span class="label label-success">Online</span>
-                                                <span class="badge">4</span>
-                                                Visitante 2
-                                            </a>
-                                            <a href="#" class="list-group-item" ng-click="ctrl.selecionarUsuario('3')">
-                                                <span class="label label-danger">Offline</span>
-                                                <span class="badge">0</span>
-                                                Visitante 3
-                                            </a>
-                                        </div>
-                                </div>
                         </nav>
 
-                        <div id="page-wrapper">
-                                <div class="container-fluid">
-                                        <div class="row">
-                                                <div class="col-lg-12" ng-view>
-                                                </div>
-                                        </div>
-                                </div>
+                        <div ng-view>
                         </div>
 
                 </div>      

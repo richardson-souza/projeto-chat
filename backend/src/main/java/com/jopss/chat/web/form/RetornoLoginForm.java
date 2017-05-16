@@ -14,6 +14,7 @@ public class RetornoLoginForm {
 	private String perfil;
 	private String nome;
         private String login;
+        private Long id;
 
         private String mensagemErro;
 	private String mensagemDescricao;
@@ -35,14 +36,19 @@ public class RetornoLoginForm {
         
         public RetornoLoginForm(Usuario usuario) {
 		this.perfil = usuario.getPerfil().getNome();
+                this.id = usuario.getId();
 		this.nome = usuario.getNome();
-                this.nome = usuario.getLogin();
+                this.login = usuario.getLogin();
 		this.status = 200;
                 
                 for(Permissao p : usuario.getPerfil().getPermissoes()){
                         permissoes.add(p.getPapel().name());
                 }
 	}
+
+        public Long getId() {
+                return id;
+        }
 
         public String getToken() {
                 return token;

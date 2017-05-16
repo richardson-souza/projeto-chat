@@ -48,7 +48,7 @@ public class SegurancaInterceptorWebsocket extends ChannelInterceptorAdapter {
                 } else if (type == SimpMessageType.DISCONNECT) {
                         log.info("DISCONNECT: token" + token);
                         SegurancaAPIThreadLocal.remove(token);
-                        this.messagingTemplate.convertAndSend("/subscribe/canal/chat", new WebsocketForm("DISCONNECT"));
+                        this.messagingTemplate.convertAndSend("/subscribe/canal/usuario", new WebsocketForm(SimpMessageType.UNSUBSCRIBE.name(), ""));
                 }
 
                 return super.preSend(message, channel);
@@ -71,7 +71,7 @@ public class SegurancaInterceptorWebsocket extends ChannelInterceptorAdapter {
                                 try {
                                         SegurancaAPI seg = segurancaServico.verificaValidadeTokenAdicionandoNoContexto(token);
                                         log.info("INFORMANDO USUARIO ATIVO");
-                                        this.messagingTemplate.convertAndSend("/subscribe/canal/chat", new WebsocketForm("CONNECT", seg.getUsuario()));
+                                        this.messagingTemplate.convertAndSend("/subscribe/canal/usuario", new WebsocketForm(SimpMessageType.SUBSCRIBE.name(), seg.getUsuario()));
                                 } catch (TokenExpiradoException | TokenInvalidoException ex) {
                                         log.error("Erro de Token em SegurancaInterceptorWebsocket.");
                                 }

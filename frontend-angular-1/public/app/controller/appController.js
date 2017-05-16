@@ -1,4 +1,4 @@
-appMain.controller("AppController", function ($location, $rootScope, Seguranca) {
+appMain.controller("AppController", function ($location, $rootScope, Seguranca, Chat) {
         var ctrl = this;
         
         ctrl.selecionarUsuario = function(id){
@@ -10,6 +10,7 @@ appMain.controller("AppController", function ($location, $rootScope, Seguranca) 
         };
 
         ctrl.logout = function(){
+                Chat.desconectar();
         	Seguranca.logout();
         }
         
